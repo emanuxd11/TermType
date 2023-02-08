@@ -1,7 +1,8 @@
+import sys, tty, termios
 from random import randint
 from colorama import Fore, Back, Style
 from os import system, name
-import sys, tty, termios
+from time import time
 
 def getch():
     fd = sys.stdin.fileno()
@@ -34,23 +35,31 @@ def displayText(text: str, current: int, status: bool) -> None:
 
 def run() -> None:
     text = pickText()
+    wordCount = len(text.split())
 
+    tic = 0.0
     errors = 0
     correct = True
     idx = 0
     while idx < len(text):
         clearScreen()
+        print(f"Time: {round(time() - tic if tic > 0 else tic, 1)}\n")
         displayText(text, idx, correct)
+        
         character = getch()
+        if idx == 0 and correct:
+            tic = time()
+
         if character == text[idx]:
             correct = True
             idx += 1
         else:
             errors += 1
             correct = False
+    toc = time()
 
-    print(f"WPM: {6969}")
-    print(f"Accuracy: {(1 - errors / len(text)) * 100}%")
+    print(f"WPM: {round(wordCount / ((toc - tic) / 60), 0)}")
+    print(f"Accuracy: {round((1 - errors / len(text)) * 100, 1)}%")
 
 if __name__ == "__main__":
     run()
