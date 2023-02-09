@@ -9,12 +9,11 @@ Terminal based typing game written in Python!
 - **Multiple texts** - Upon starting, the game, a random text will be picked for you to type. These were shamelessly stolen from [TypeRacer's text database](https://data.typeracer.com/pit/texts). I also plan on updating this in the future (see next section).
 - **Typing stats** - When you finish typing a text, you'll get feedback on your typing speed and accuracy.
 - **Timer** - Above the text, there is a timer. However, this isn't perfect (see next section).
-
+- **Backspace** - Allows you to backspace to fix typos. You'll be allowed to type a few more characters up to a limit. When you reach the limit, your only option will be to backspace and fix your mistake, just like in [TypeRacer](https://play.typeracer.com/). *Please note* that this feature still has a few bugs.
 
 ### What I plan on adding in future updates:
 
 - **ncurses support** - Currently I am not using ncurses, I plan on changing this in the future.
-- **Backspace support** - In the current state, when you mistype a character, the cursor just blocks, not allowing you to type further. However, this feels a bit awkward because, naturally, your first instict would be to backspace, deleting the few characters you typed before realizing the mistake, and retype the wrong section. I plan on fixing this by adding a backspace feature that would give you the option to continue typing or fix your typo.
 - **Better timer** - The timer only updates when you insert a new character and the whole screen updates at once. Obviously, this isn't ideal and I plan on making it so that the timer updates independently from the text.
 - **Better visualization** - As opppose to the text being presented in a single, terminal-wide, line, there would be a word limit per line, I believe that it would look nicer this way.
 - **Different visualization modes** - Ideally, I'd like to add at least another visualization option where, instead of seeing the text all at once with the typed section highlighted in a different shade, you'd be shown only the current word, one at a time.
