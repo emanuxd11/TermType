@@ -13,7 +13,7 @@ Terminal based typing game written in Python!
 
 ### What I plan on adding in future updates:
 
-- **ncurses support** - Currently I am not using ncurses, I plan on changing this in the future.
+- **ncurses** - Currently I am not using ncurses, I plan on changing this in the future.
 - **Better timer** - The timer only updates when you insert a new character and the whole screen updates at once. Obviously, this isn't ideal and I plan on making it so that the timer updates independently from the text.
 - **Better visualization** - As opppose to the text being presented in a single, terminal-wide, line, there would be a word limit per line, I believe that it would look nicer this way.
 - **Different visualization modes** - Ideally, I'd like to add at least another visualization option where, instead of seeing the text all at once with the typed section highlighted in a different shade, you'd be shown only the current word, one at a time.
