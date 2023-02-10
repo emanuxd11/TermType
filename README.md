@@ -2,6 +2,9 @@
 Terminal based typing game written in Python!
 
 
+
+# Added/planned features
+
 ### What I've added so far:
 
 - **Text highlighting** - The section of text you've already typed is shown in white, while the rest is dimmed.
@@ -21,3 +24,7 @@ Terminal based typing game written in Python!
 - **More text support** - While the program already supports an indefinite amount of texts, these all have to be added manually, and are stored in a plain .txt file. I also plan on updating this to make it more practical.
 - **Type anything** - Feature that would allow you to type your own text, from a file you provided.
 
+
+
+# License
+MIT License
