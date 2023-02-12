@@ -48,11 +48,13 @@ def displayText(text: str, current: int, wrong_span: int) -> None:
     wrong_start = current - wrong_span
 
     if wrong_span == 0:
-        print(text[:current] + Back.WHITE + Fore.BLACK + text[current] + 
-        Style.RESET_ALL + Style.DIM + text[current + 1:] + Style.RESET_ALL)
+        disp = Fore.GREEN + text[:current]  + Back.WHITE + Fore.BLACK + text[current] + \
+        Style.RESET_ALL + Style.DIM + text[current + 1:] + Style.RESET_ALL
     else:
-        print(text[:wrong_start] + Back.RED + text[wrong_start:wrong_start + wrong_span] + 
-        Style.RESET_ALL + Style.DIM + text[wrong_start + wrong_span:] + Style.RESET_ALL)
+        disp = Fore.GREEN + text[:wrong_start] + Style.RESET_ALL+ Back.RED + \
+        text[wrong_start:wrong_start + wrong_span] + Style.RESET_ALL + Style.DIM + \
+        text[wrong_start + wrong_span:] + Style.RESET_ALL
+    print(disp)
 
 """
 TODO:
