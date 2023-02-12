@@ -23,72 +23,85 @@ def clearScreen() -> None:
 def pickText() -> str:
     with open("../docs/texts.txt") as f:
         lines = f.readlines()
-        # text = lines[randint(0, len(lines) - 1)]
-        # test line
-        text = lines[17]
+        text = lines[randint(0, len(lines) - 1)]
         if text.endswith('\n'):
             text = text[:len(text) - 1]
         return text
 
-def displayText(text: str, current: int, wrong_start: int, wrong_span: int, status: bool) -> None:
-    if status:
+def calculateWPM(word_count: int, elapsed_time: float) -> float:
+    return round(word_count / ((elapsed_time) / 60), 0)
+
+def calculateAccuracy(errors: int, n_chars: int) -> float:
+    return round((1 - errors / n_chars) * 100, 1)
+
+def displayStats(wpm: float, accuracy: float) -> None:
+    print(f"WPM: {wpm}")
+    print(f"Accuracy: {accuracy}%")
+
+def displayTime(tic: float, toc: float) -> None:
+    print(f"Time: {round(toc - tic if tic > 0 else tic, 1)}\n")
+
+def displayWholeText(text: str) -> None:
+    print(text)
+
+def displayText(text: str, current: int, wrong_span: int) -> None:
+    wrong_start = current - wrong_span
+
+    if wrong_span == 0:
         print(text[:current] + Back.WHITE + Fore.BLACK + text[current] + 
-        Style.RESET_ALL + Style.DIM + text[current+1:] + Style.RESET_ALL)
+        Style.RESET_ALL + Style.DIM + text[current + 1:] + Style.RESET_ALL)
     else:
-        print(text[:wrong_start] + Back.RED + text[wrong_start:wrong_start+wrong_span] + 
-        Style.RESET_ALL + Style.DIM + text[wrong_start+wrong_span:] + Style.RESET_ALL)
+        print(text[:wrong_start] + Back.RED + text[wrong_start:wrong_start + wrong_span] + 
+        Style.RESET_ALL + Style.DIM + text[wrong_start + wrong_span:] + Style.RESET_ALL)
 
 """
-TODO:  
-    - FIX ISSUE WHERE WHEN THE LAST FEW CHARACTERS ARE WRONG, IT
-    DOESN'T ALLOW YOU TO MISTYPE FURTHER THAN THE PENULTIMATE 
-    CHARACTER (IT SHOULD ALLOW YOU TO TYPE UNTIL THE LAST ONE)
-
-    - FIX THE ISSUE WHERE WHEN YOU BACKSPACE AND DELETE THE MISTYPED
-    CHARACTER, THERE'S NO CURSOR HIGHLIGHTING (SHOULD BE WHITE
-    HIGHLIGHTING SINCE THERE ARE NO MORE WRONG CHARACTERS)
+TODO:
+    -- NEED TO REWRITE THE CODE I USE TO DETERMINE
+    WHEN TO GO FORWARD IN INDEX, INCREASE WRONG
+    COUNTER, ETC AS IT HAS GOTTEN TOO COMPLICATED 
+    AND SPAGHETTIFIED AND IS NOW CAUSING ISSUES
+    (NAMELY, IF THE LAST CHARACTER IS WRONG, IT GETS MESSY)
 """
 def run() -> None:
     text = pickText()
-    word_count = len(text.split())
     tic = 0.0
-    errors = 0
+    total_errors = 0
     curr_wrong = 0
-    correct = True
-    wrong_idx = -1
 
     idx = 0
     while idx < len(text) or curr_wrong > 0:
         clearScreen()
         print("Press 'esc' to quit")
-        print(f"Time: {round(time() - tic if tic > 0 else tic, 1)}\n")
-        displayText(text, idx, wrong_idx, curr_wrong, correct)
+        displayTime(tic, time())
+        displayText(text, idx, curr_wrong)
         
         char = getch()
         if char == ESCAPE:
             quit()
 
-        if idx == 0 and correct:
+        if idx == 0 and curr_wrong == 0:
             tic = time()
 
         if char == text[idx] and curr_wrong == 0:
-            correct = True
             idx += 1
-        elif not correct and curr_wrong > 0 and char == BACKSPACE:
+        elif curr_wrong > 0 and curr_wrong > 0 and char == BACKSPACE:
             curr_wrong -= 1
-            idx -= 1
+            if idx < len(text) - 1:
+                idx -= 1
         elif char != BACKSPACE and curr_wrong < 7:
-            if curr_wrong == 0:
-                wrong_idx = idx
             if idx < len(text) - 1:
                 idx += 1
                 curr_wrong += 1
-            errors += 1
-            correct = False
+            elif idx < len(text) and curr_wrong < 1:
+                curr_wrong = 1
+            total_errors += 1
     toc = time()
+    clearScreen()
+    print("Press 'esc' to quit")
+    displayTime(tic, time())
+    displayWholeText(text)
 
-    print(f"WPM: {round(word_count / ((toc - tic) / 60), 0)}")
-    print(f"Accuracy: {round((1 - errors / len(text)) * 100, 1)}%")
-
+    displayStats(calculateWPM(len(text.split()), toc - tic), 
+        calculateAccuracy(total_errors, len(text)))
 if __name__ == "__main__":
     run()
