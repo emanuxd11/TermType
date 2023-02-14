@@ -4,8 +4,20 @@ from colorama import Fore, Back, Style
 from os import system, name
 from time import time
 
+"""
+TODO: 
+    -- PUT THE LOGO IN A LIST OF STRINGS WHERE
+    EACH LINE IS A STRING
+"""
+TABS = "\t\t\t\t"
 ESCAPE = chr(27)
 BACKSPACE = chr(127)
+LOGO = f" _____                 _____\n\
+|_   _|__ _ __ _ __ __|_   _|   _ _ __   ___\n\
+  | |/ _ \\ '__| '_ ` _ \\| || | | | '_ \\ / _ \\\n\
+  | |  __/ |  | | | | | | || |_| | |_) |  __/\n\
+  |_|\___|_|  |_| |_| |_|_| \__, | .__/ \___|\n\
+                            |___/|_|"
 
 def getch():
     fd = sys.stdin.fileno()
@@ -35,14 +47,14 @@ def calculateAccuracy(errors: int, n_chars: int) -> float:
     return round((1 - errors / n_chars) * 100, 1)
 
 def displayStats(wpm: float, accuracy: float) -> None:
-    print(f"WPM: {wpm}")
+    print(f"\nWPM: {wpm}")
     print(f"Accuracy: {accuracy}%")
 
 def displayTime(tic: float, toc: float) -> None:
     print(f"Time: {round(toc - tic if tic > 0 else tic, 1)}\n")
 
 def displayWholeText(text: str) -> None:
-    print(text)
+    print(Fore.GREEN + text + Style.RESET_ALL)
 
 def displayText(text: str, current: int, wrong_span: int) -> None:
     wrong_start = current - wrong_span
@@ -55,7 +67,35 @@ def displayText(text: str, current: int, wrong_span: int) -> None:
         text[wrong_start:wrong_start + wrong_span] + Style.RESET_ALL + Style.DIM + \
         text[wrong_start + wrong_span:] + Style.RESET_ALL
     print(disp)
+"""
+TODO:
+    -- ADD KEYS FOR SPACE AND BACKSPACE
 
+    -- ADD DIFFERENTIATION BETWEEN UPPER CASE 
+    AND LOWER CASE 
+"""
+def displayKeyboard(typed: chr=None, correct: chr=None) -> None:
+    # Set up keys
+    keyb = f"\t\t\t\t1234567890-=\n{TABS}QWERTYUIOP?'\
+        \n{TABS}ASDFGHJKL;,\"\n{TABS}ZXCVBNM[].()"
+    keyb = list(keyb)
+
+    # In case we haven't typed anything just yet
+    if typed is None or typed.upper() not in keyb:
+        print("\n " + " ".join(keyb))
+        return
+    
+    # Normalize everything to upper case
+    typed = typed.upper()
+    correct = correct.upper()
+
+    # Set background color: green if correct, red if wrong
+    bg_color = Back.GREEN if typed == correct else Back.RED
+    keyb[keyb.index(typed)] = bg_color + Fore.BLACK + \
+        typed + Style.RESET_ALL
+    
+    print("\n " + " ".join(keyb))
+    
 """
 TODO:
     -- NEED TO REWRITE THE CODE I USE TO DETERMINE
@@ -63,20 +103,25 @@ TODO:
     COUNTER, ETC AS IT HAS GOTTEN TOO COMPLICATED 
     AND SPAGHETTIFIED AND IS NOW CAUSING ISSUES
     (NAMELY, IF THE LAST CHARACTER IS WRONG, IT GETS MESSY)
+
+    -- 
 """
 def run() -> None:
     text = pickText()
     tic = 0.0
     total_errors = 0
     curr_wrong = 0
+    char = None
 
     idx = 0
     while idx < len(text) or curr_wrong > 0:
         clearScreen()
+        print(LOGO)
         print("Press 'esc' to quit")
         displayTime(tic, time())
         displayText(text, idx, curr_wrong)
-        
+        displayKeyboard(char, text[idx - 1 if idx > 0 else 0])
+
         char = getch()
         if char == ESCAPE:
             quit()
@@ -99,9 +144,10 @@ def run() -> None:
             total_errors += 1
     toc = time()
     clearScreen()
-    print("Press 'esc' to quit")
+    print("Finished!")
     displayTime(tic, time())
     displayWholeText(text)
+    displayKeyboard()
 
     displayStats(calculateWPM(len(text.split()), toc - tic), 
         calculateAccuracy(total_errors, len(text)))
