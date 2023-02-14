@@ -10,14 +10,15 @@ TODO:
     EACH LINE IS A STRING
 """
 TABS = "\t\t\t\t"
+SPACE = chr(32)
 ESCAPE = chr(27)
 BACKSPACE = chr(127)
-LOGO = f" _____                 _____\n\
-|_   _|__ _ __ _ __ __|_   _|   _ _ __   ___\n\
-  | |/ _ \\ '__| '_ ` _ \\| || | | | '_ \\ / _ \\\n\
-  | |  __/ |  | | | | | | || |_| | |_) |  __/\n\
-  |_|\___|_|  |_| |_| |_|_| \__, | .__/ \___|\n\
-                            |___/|_|"
+# LOGO = f" _____                 _____\n\
+# |_   _|__ _ __ _ __ __|_   _|   _ _ __   ___\n\
+#   | |/ _ \\ '__| '_ ` _ \\| || | | | '_ \\ / _ \\\n\
+#   | |  __/ |  | | | | | | || |_| | |_) |  __/\n\
+#   |_|\___|_|  |_| |_| |_|_| \__, | .__/ \___|\n\
+#                             |___/|_|"
 
 def getch():
     fd = sys.stdin.fileno()
@@ -75,27 +76,50 @@ TODO:
     AND LOWER CASE 
 """
 def displayKeyboard(typed: chr=None, correct: chr=None) -> None:
-    # Set up keys
-    keyb = f"\t\t\t\t1234567890-=\n{TABS}QWERTYUIOP?'\
-        \n{TABS}ASDFGHJKL;,\"\n{TABS}ZXCVBNM[].()"
-    keyb = list(keyb)
+    keyb_uppercase = [
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '=', '«', '»', 'DEL'],
+        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '?', "'", '*', '_', '-'],
+        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', ',', '"', 'SPACE'],
+        ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '[', ']', '.', '(', ')']
+    ]
 
-    # In case we haven't typed anything just yet
-    if typed is None or typed.upper() not in keyb:
-        print("\n " + " ".join(keyb))
-        return
-    
-    # Normalize everything to upper case
-    typed = typed.upper()
-    correct = correct.upper()
+    keyb_lowercase = [
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '=', '«', '»', 'DEL'],
+        ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '?', "'", '*', '_', '-'],
+        ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', ',', '"', 'SPACE'],
+        ['z', 'x', 'c', 'v', 'b', 'n', 'm', '[', ']', '.', '(', ')']
+    ]
 
-    # Set background color: green if correct, red if wrong
-    bg_color = Back.GREEN if typed == correct else Back.RED
-    keyb[keyb.index(typed)] = bg_color + Fore.BLACK + \
-        typed + Style.RESET_ALL
+    # Figure out which of these to use
+    layout = keyb_uppercase \
+        if (typed is None or typed.isupper() and typed not in [SPACE, BACKSPACE] ) \
+        else keyb_lowercase
     
-    print("\n " + " ".join(keyb))
+    # Special cases for SPACE and BACKSPACE
+    if typed == SPACE:
+        if typed == correct:
+            correct = typed = 'SPACE'
+        else:
+            typed = 'SPACE'
+    elif typed == BACKSPACE:
+        typed = 'DEL'
     
+    # Change current key color
+    if typed == 'DEL':
+        key_color = Back.WHITE
+    elif typed == correct:
+        key_color = Back.GREEN
+    else:
+        key_color = Back.RED
+    key_color += Fore.BLACK
+
+    # Just for new line
+    print()
+    for line in layout:
+        if typed in line:
+            line[line.index(typed)] = key_color + typed + Style.RESET_ALL
+        print(TABS + " ".join(line))
+
 """
 TODO:
     -- NEED TO REWRITE THE CODE I USE TO DETERMINE
@@ -116,7 +140,7 @@ def run() -> None:
     idx = 0
     while idx < len(text) or curr_wrong > 0:
         clearScreen()
-        print(LOGO)
+        # print(LOGO)
         print("Press 'esc' to quit")
         displayTime(tic, time())
         displayText(text, idx, curr_wrong)
@@ -151,5 +175,6 @@ def run() -> None:
 
     displayStats(calculateWPM(len(text.split()), toc - tic), 
         calculateAccuracy(total_errors, len(text)))
+        
 if __name__ == "__main__":
     run()
