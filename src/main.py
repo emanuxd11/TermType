@@ -4,21 +4,10 @@ from colorama import Fore, Back, Style
 from os import system, name
 from time import time
 
-"""
-TODO: 
-    -- PUT THE LOGO IN A LIST OF STRINGS WHERE
-    EACH LINE IS A STRING
-"""
 TABS = "\t\t\t\t"
 SPACE = chr(32)
 ESCAPE = chr(27)
 BACKSPACE = chr(127)
-# LOGO = f" _____                 _____\n\
-# |_   _|__ _ __ _ __ __|_   _|   _ _ __   ___\n\
-#   | |/ _ \\ '__| '_ ` _ \\| || | | | '_ \\ / _ \\\n\
-#   | |  __/ |  | | | | | | || |_| | |_) |  __/\n\
-#   |_|\___|_|  |_| |_| |_|_| \__, | .__/ \___|\n\
-#                             |___/|_|"
 
 def getch():
     fd = sys.stdin.fileno()
@@ -140,7 +129,6 @@ def run() -> None:
     idx = 0
     while idx < len(text) or curr_wrong > 0:
         clearScreen()
-        # print(LOGO)
         print("Press 'esc' to quit")
         displayTime(tic, time())
         displayText(text, idx, curr_wrong)
