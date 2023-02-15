@@ -1,0 +1,2 @@
+Fetched 7411 texts in 248.8 min (29.8/min - 1788.0/h)
+Failed 2739 times (was fixed)
