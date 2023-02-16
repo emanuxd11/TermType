@@ -46,7 +46,7 @@ def scraper(id):
         return scraper(id)
 
 if __name__ == "__main__":
-    text_ids = fetch_ids(limit=50)
+    text_ids = fetch_ids(limit=1000)
 
     tic = time()
     with ThreadPoolExecutor(max_workers=2) as p:
