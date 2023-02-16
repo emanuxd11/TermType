@@ -1,13 +1,10 @@
 import requests
 from json import dump
-from time import time
-from time import sleep
-from random import choice
+from time import time, sleep
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 
 error = []
-user_agents = ['Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',    'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36']
 
 def fetch_ids(limit=-1):
     print("Downloading...")
@@ -19,15 +16,13 @@ def fetch_ids(limit=-1):
     text_ids = [int(str(a).split("id=")[1].split("\">")[0]) for a in soup.find_all("a", href=lambda x : x and x.startswith("/text?id=")) if a != None]
     print("... Done")
 
-    if limit >= 0:
+    if limit >= 0 and limit < len(text_ids):
         text_ids = text_ids[0:limit]
     
     return text_ids
 
-def scraper(id):
-    # sleep(15.12345689)
-    headers = {'User-Agent': choice(user_agents)}
-    response = requests.get("https://data.typeracer.com/pit/text_info?id={}".format(id), headers=headers)
+def scraper(id, delay=6):
+    response = requests.get("https://data.typeracer.com/pit/text_info?id={}".format(id))
     soup = BeautifulSoup(response.text, "html.parser")
 
     try:
@@ -42,11 +37,11 @@ def scraper(id):
     except:
         print("Failure on id:", id, soup.text)
         error.append(id)
-        sleep(3)
+        sleep(delay)
         return scraper(id)
 
 if __name__ == "__main__":
-    text_ids = fetch_ids(limit=1000)
+    text_ids = fetch_ids()
 
     tic = time()
     with ThreadPoolExecutor(max_workers=2) as p:
@@ -66,7 +61,7 @@ if __name__ == "__main__":
     txt_per_hour = round(txt_per_min * 60, 1)
 
     with open("log.txt", "w") as f:
-        f.write(f"Fetched {len(text_ids)} texts in {elapsed_min} min ({txt_per_min}/min - {txt_per_hour}/h)\n")
+        f.write(f"Fetched {len(text_ids)} texts in {elapsed_min} min | {elapsed_hour} h ({txt_per_min}/min | {txt_per_hour}/h)\n")
         f.write(f"Failed {len(error)} times (was fixed)")
 
     print(f"\nFetched {len(text_ids)} texts in {elapsed_sec} s | {elapsed_min} min | {elapsed_hour} h")
