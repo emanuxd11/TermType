@@ -1,5 +1,5 @@
 # TermType
-Terminal based typing game written in Python!
+TUI single player clone of [TypeRacer](https://play.typeracer.com/) written in Python!
 
 
 
