@@ -1,6 +1,9 @@
 # TermType
 TUI single player clone of [TypeRacer](https://play.typeracer.com/) written in Python!
 
+<p align="center">
+  <img src="resources/termtype.png"/>
+</p>
 
 # Main priority as of now
 - **Refactoring** - As this started as a simple "let's see if it works" kind of
